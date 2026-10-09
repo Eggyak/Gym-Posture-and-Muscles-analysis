@@ -1,0 +1,10 @@
+[env:esp32cam]
+platform = espressif32
+board = esp32cam
+framework = arduino
+monitor_speed = 115200
+upload_speed = 921600
+build_flags = 
+    -DCAMERA_MODEL_AI_THINKER
+lib_deps = 
+    esp32-camera

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Gym Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div>
+        <p class="eyebrow">Smart Muscle Condition Detection</p>
+        <h1>Gym Vision Hub</h1>
+        <p class="lede">Frontend dashboard for posture analysis, dual-muscle EMG monitoring, and combined exercise guidance.</p>
+      </div>
+
+      <div class="sidebar-card">
+        <p class="sidebar-label">Reference mapping</p>
+        <ul class="compact-list">
+          <li>Camera feed inspired by your MediaPipe exercise flow</li>
+          <li>Bluetooth connection inspired by your ESP32 serial listener</li>
+          <li>EMG insights visualized with two live sensor plots</li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <p class="sidebar-label">Frontend-only note</p>
+        <p class="muted">Auth is stored in local storage. Camera uses browser permissions. Bluetooth works only in supported browsers and compatible devices.</p>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">AI Exercise Analytics</p>
+          <h2 id="page-title">Login</h2>
+        </div>
+        <div class="topbar-actions">
+          <span id="user-chip" class="user-chip hidden"></span>
+          <button id="logout-btn" class="ghost-btn hidden" type="button">Logout</button>
+        </div>
+      </header>
+
+      <section id="auth-view" class="view active">
+        <div class="auth-shell">
+          <div class="card auth-card auth-single">
+            <div class="card-head">
+              <p class="eyebrow">Welcome back</p>
+              <h3>Login</h3>
+            </div>
+            <form id="login-form" class="stack">
+              <label>
+                <span>Email</span>
+                <input id="login-email" type="email" placeholder="you@example.com" required>
+              </label>
+              <label>
+                <span>Password</span>
+                <input id="login-password" type="password" placeholder="Enter password" required>
+              </label>
+              <button class="primary-btn" type="submit">Login</button>
+            </form>
+            <p class="auth-link-copy">New here? <button id="go-signup-btn" class="text-link" type="button">Signup</button></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="signup-view" class="view">
+        <div class="auth-shell">
+          <div class="card auth-card auth-single">
+            <div class="card-head">
+              <p class="eyebrow">Create account</p>
+              <h3>Signup</h3>
+            </div>
+            <form id="signup-form" class="stack">
+              <label>
+                <span>Full name</span>
+                <input id="signup-name" type="text" placeholder="Your name" required>
+              </label>
+              <label>
+                <span>Email</span>
+                <input id="signup-email" type="email" placeholder="you@example.com" required>
+              </label>
+              <label>
+                <span>Password</span>
+                <input id="signup-password" type="password" placeholder="Create password" required>
+              </label>
+              <button class="secondary-btn" type="submit">Create account</button>
+            </form>
+            <p class="auth-link-copy">Already have an account? <button id="go-login-btn" class="text-link" type="button">Login</button></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="setup-view" class="view">
+        <div class="card">
+          <div class="card-head">
+            <p class="eyebrow">Session setup</p>
+            <h3>Choose your analysis flow</h3>
+          </div>
+
+          <form id="setup-form" class="stack">
+            <div class="field-grid">
+              <label>
+                <span>Analysis type</span>
+                <select id="analysis-type" required>
+                  <option value="posture">Posture analysis</option>
+                  <option value="muscle">Muscle analysis</option>
+                  <option value="both">Both at the same time</option>
+                </select>
+              </label>
+              <label>
+                <span>Exercise</span>
+                <select id="exercise-type" required>
+                  <option value="squats">Squats</option>
+                  <option value="curls">Curls</option>
+                </select>
+              </label>
+              <label>
+                <span>Camera source</span>
+                <select id="camera-source" required>
+                  <option value="webcam">Laptop Webcam</option>
+                  <option value="esp32">ESP32-CAM</option>
+                </select>
+              </label>
+              <label>
+                <span>ESP32-CAM stream URL</span>
+                <input id="esp32-url" type="text" value="http://10.225.168.133/1024x768.mjpeg" placeholder="http://<esp32-ip>/1024x768.mjpeg">
+              </label>
+              <label>
+                <span>Target reps</span>
+                <input id="target-reps" type="number" min="1" value="12" required>
+              </label>
+              <label>
+                <span>Total sets</span>
+                <input id="total-sets" type="number" min="1" value="3" required>
+              </label>
+              <label>
+                <span>Rest timer between sets (seconds)</span>
+                <input id="rest-seconds" type="number" min="5" value="45" required>
+              </label>
+              <label>
+                <span>Muscle timer / monitoring duration (seconds)</span>
+                <input id="monitor-seconds" type="number" min="10" value="60" required>
+              </label>
+            </div>
+
+            <div class="setup-hint">
+              <p id="setup-copy">Posture mode will use your camera, count reps, and show posture recommendations with set rest timing.</p>
+            </div>
+
+            <div class="actions">
+              <button class="primary-btn" type="submit">Start session</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="session-view" class="view">
+        <div class="overview-grid">
+          <article class="card hero-card">
+            <div class="card-head inline-card-head">
+              <div>
+                <p class="eyebrow">Live session</p>
+                <h3 id="session-heading">Posture Analysis</h3>
+              </div>
+              <div class="pill-row">
+                <span id="analysis-pill" class="pill">Posture</span>
+                <span id="exercise-pill" class="pill alt">Squats</span>
+              </div>
+            </div>
+
+            <div class="stats-grid">
+              <div class="metric">
+                <span>Elapsed</span>
+                <strong id="elapsed-timer">00:00</strong>
+              </div>
+              <div class="metric">
+                <span>Current set</span>
+                <strong id="current-set">1 / 3</strong>
+              </div>
+              <div class="metric">
+                <span>Reps completed</span>
+                <strong id="rep-counter">0 / 12</strong>
+              </div>
+              <div class="metric">
+                <span>Rest countdown</span>
+                <strong id="rest-timer">Ready</strong>
+              </div>
+            </div>
+
+            <div class="controls-row">
+              <button id="camera-btn" class="primary-btn" type="button">Enable camera</button>
+              <input id="emg-port" type="text" placeholder="COM5" value="COM5">
+              <input id="emg-baud" type="number" placeholder="115200" value="115200">
+              <button id="bluetooth-btn" class="secondary-btn" type="button">Connect ESP32 EMG</button>
+              <button id="rep-btn" class="ghost-btn" type="button">Add rep</button>
+              <button id="finish-btn" class="ghost-btn danger" type="button">Finish session</button>
+            </div>
+            <p class="muted">Detected Windows serial ports on this machine: COM5, COM6, COM7, COM8</p>
+          </article>
+
+          <article id="camera-card" class="card live-card">
+            <div class="card-head inline-card-head">
+              <div>
+                <p class="eyebrow">Camera monitor</p>
+                <h3>Posture feed</h3>
+              </div>
+              <span id="camera-status" class="badge">Camera offline</span>
+            </div>
+            <div class="video-wrap">
+              <img id="camera-feed" alt="Python posture feed">
+              <div class="video-overlay">
+                <span id="posture-stage">Stage: Ready</span>
+                <span id="posture-score">Form score: 86%</span>
+              </div>
+            </div>
+            <div class="recommendation-box">
+              <p class="recommendation-label">Posture recommendation</p>
+              <p id="posture-recommendation">Keep your chest up and knees aligned with your toes.</p>
+            </div>
+          </article>
+
+          <article id="muscle-card" class="card live-card">
+            <div class="card-head inline-card-head">
+              <div>
+                <p class="eyebrow">EMG tracking</p>
+                <h3>Raw signal activity</h3>
+              </div>
+              <span id="bluetooth-status" class="badge warn">ESP32 not connected</span>
+            </div>
+
+            <div class="canvas-wrap">
+              <canvas id="emg-chart" width="1100" height="420"></canvas>
+            </div>
+
+            <div class="stats-grid">
+              <div class="metric">
+                <span>Raw 1 MVC</span>
+                <strong id="mvc-a">0%</strong>
+              </div>
+              <div class="metric">
+                <span>Raw 2 MVC</span>
+                <strong id="mvc-b">0%</strong>
+              </div>
+              <div class="metric">
+                <span>Activation levels</span>
+                <strong id="activation-level">A 0% | B 0%</strong>
+              </div>
+              <div class="metric">
+                <span>Imbalance</span>
+                <strong id="imbalance-level">0%</strong>
+              </div>
+              <div class="metric">
+                <span>Fatigue</span>
+                <strong id="fatigue-level">Low</strong>
+              </div>
+              <div class="metric">
+                <span>Monitor timer</span>
+                <strong id="muscle-timer">00:00</strong>
+              </div>
+            </div>
+
+            <div class="recommendation-box">
+              <p class="recommendation-label">Muscle recommendation</p>
+              <p id="muscle-recommendation">Connect your EMG device to begin sensor-based analysis.</p>
+              <p id="emg-raw-line" class="muted"></p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="summary-view" class="view">
+        <div class="summary-grid">
+          <article class="card">
+            <div class="card-head">
+              <p class="eyebrow">Session result</p>
+              <h3>Performance summary</h3>
+            </div>
+            <div id="summary-content" class="summary-copy"></div>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <p class="eyebrow">Medical help</p>
+              <h3>Nearest doctor search</h3>
+            </div>
+            <p class="muted">Use your location to search nearby orthopedic, physiotherapy, or sports medicine doctors.</p>
+            <div class="actions">
+              <button id="doctor-btn" class="primary-btn" type="button">Find nearest doctors</button>
+            </div>
+            <div id="doctor-results" class="doctor-results"></div>
+          </article>
+        </div>
+
+        <div class="actions footer-actions">
+          <button id="new-session-btn" class="secondary-btn" type="button">Start another session</button>
+        </div>
+      </section>
+
+      <div id="toast" class="toast hidden"></div>
+    </main>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

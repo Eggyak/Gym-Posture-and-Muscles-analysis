@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Gym Dashboard Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3efe6;
+      --ink: #132022;
+      --muted: #617173;
+      --accent: #ff6b3d;
+      --teal: #0f8b8d;
+      --panel: rgba(255, 252, 246, 0.9);
+      --line: rgba(19, 32, 34, 0.12);
+      --shadow: 0 28px 80px rgba(19, 32, 34, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255, 107, 61, 0.16), transparent 25%),
+        radial-gradient(circle at bottom right, rgba(15, 139, 141, 0.18), transparent 22%),
+        linear-gradient(135deg, #f7f1e7 0%, #e8eeea 100%);
+    }
+
+    .deck {
+      width: min(1200px, calc(100vw - 40px));
+      margin: 24px auto 88px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 16px;
+    }
+
+    .title {
+      margin: 0;
+      font-family: "Instrument Serif", serif;
+      font-size: clamp(2.2rem, 4vw, 3.6rem);
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .primary { background: linear-gradient(135deg, #ff6b3d, #ff8d4d); color: #fff; }
+    .ghost { background: rgba(255,255,255,0.72); color: var(--ink); border: 1px solid var(--line); }
+
+    .counter {
+      padding: 0.8rem 1rem;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      min-width: 78px;
+      text-align: center;
+    }
+
+    .slide {
+      display: none;
+      min-height: 78vh;
+      padding: 38px;
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 34px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .slide.active { display: block; }
+
+    .eyebrow {
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.74rem;
+      color: var(--teal);
+    }
+
+    h2 {
+      margin: 0.45rem 0 1rem;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1.05;
+    }
+
+    .lead {
+      max-width: 850px;
+      font-size: 1.1rem;
+      line-height: 1.65;
+      color: #243436;
+    }
+
+    .grid-2,
+    .grid-3,
+    .metric-grid {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1.4rem;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      padding: 1.1rem 1.2rem;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.76);
+      border: 1px solid var(--line);
+    }
+
+    .card h3, .card h4 {
+      margin: 0 0 0.5rem;
+      font-size: 1.05rem;
+    }
+
+    ul {
+      margin: 0.4rem 0 0;
+      padding-left: 1.1rem;
+      line-height: 1.7;
+    }
+
+    .highlight {
+      padding: 1.2rem 1.3rem;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255, 226, 211, 0.95), rgba(255,255,255,0.82));
+      border: 1px solid rgba(255, 107, 61, 0.2);
+      margin-top: 1rem;
+    }
+
+    .flow {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .pill {
+      padding: 0.7rem 0.9rem;
+      border-radius: 999px;
+      background: rgba(15, 139, 141, 0.12);
+      color: #075f61;
+      border: 1px solid rgba(15, 139, 141, 0.14);
+    }
+
+    .note {
+      margin-top: 1rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 14px 20px;
+      background: rgba(243, 239, 230, 0.86);
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+      backdrop-filter: blur(10px);
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .metric-grid { grid-template-columns: 1fr; }
+      .slide { padding: 24px; min-height: auto; }
+      .topbar { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media print {
+      .topbar, .footer { display: none; }
+      .deck { width: 100%; margin: 0; }
+      .slide { display: block; page-break-after: always; min-height: auto; box-shadow: none; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <div class="topbar">
+      <div>
+        <h1 class="title">Smart Gym Dashboard</h1>
+        <p class="subtitle">Presentation deck for posture analysis, EMG monitoring, and the integrated workout recommendation system</p>
+      </div>
+      <div class="controls">
+        <button id="prevBtn" class="ghost" type="button">Previous</button>
+        <div id="counter" class="counter">1 / 9</div>
+        <button id="nextBtn" class="primary" type="button">Next</button>
+      </div>
+    </div>
+
+    <section class="slide active">
+      <p class="eyebrow">Slide 1</p>
+      <h2>Smart Muscle Condition Detection Using EMG and Posture Analysis</h2>
+      <p class="lead">
+        This project is a smart gym assistant that combines real-time exercise posture analysis, EMG muscle signal monitoring,
+        workout timing, set and rep tracking, performance recommendations, and doctor lookup in one dashboard.
+      </p>
+      <div class="highlight">
+        <strong>Core idea:</strong> help users perform exercises more safely and more effectively by monitoring movement form and muscle activity during squats and curls.
+      </div>
+      <div class="flow">
+        <span class="pill">Frontend Dashboard</span>
+        <span class="pill">Python Posture Engine</span>
+        <span class="pill">ESP32 Bluetooth Serial EMG</span>
+        <span class="pill">Recommendations</span>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Slide 2</p>
+      <h2>Problem Statement</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Common gym problems</h3>
+          <ul>
+            <li>Users perform squats and curls with poor posture.</li>
+            <li>Muscle fatigue and imbalance are hard to observe visually.</li>
+            <li>Beginners do not know when to rest, when to stop, or how to improve.</li>
+            <li>Most people do not get immediate, personalized exercise feedback.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Our solution</h3>
+          <ul>
+            <li>Track body posture using Python MediaPipe pose analysis.</li>
+            <li>Read EMG data from ESP32 through Bluetooth serial.</li>
+            <li>Show live reps, posture score, raw EMG graphs, rest timers, and recommendations.</li>
+            <li>Provide medical support links when needed.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Slide 3</p>
+      <h2>System Workflow</h2>
+      <div class="flow">
+        <span class="pill">Login</span>
+        <span class="pill">Choose Analysis Type</span>
+        <span class="pill">Choose Exercise</span>
+        <span class="pill">Set Reps, Sets, Rest</span>
+        <span class="pill">Start Session</span>
+        <span class="pill">Monitor Posture + EMG</span>
+        <span class="pill">View Summary</span>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Mode 1</h3>
+          <p>Posture analysis only</p>
+        </div>
+        <div class="card">
+          <h3>Mode 2</h3>
+          <p>Muscle analysis only</p>
+        </div>
+        <div class="card">
+          <h3>Mode 3</h3>
+          <p>Combined analysis</p>
+        </div>
+      </div>
+      <p class="note">
+        The user can select squats or curls, and the system adapts the analysis pipeline to the chosen exercise.
+      </p>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Slide 4</p>
+      <h2>Frontend Dashboard Features</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Authentication</h3>
+          <ul>
+            <li>Login page</li>
+            <li>Separate signup page linked from login</li>
+            <li>Logout support</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Workout setup</h3>
+          <ul>
+            <li>Choose posture, muscle, or both</li>
+            <li>Select squats or curls</li>
+            <li>Enter target reps, total sets, and rest time</li>
+            <li>Enter EMG COM port and baud rate</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Live posture panel</h3>
+          <ul>
+            <li>Large camera feed window</li>
+            <li>Rep count and current set</li>
+            <li>Form score and movement stage</li>
+            <li>Posture recommendation in real time</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Live EMG panel</h3>
+          <ul>
+            <li>Raw data graph for raw1 and raw2</li>
+            <li>Arduino Serial Plotter style visualization</li>
+            <li>Center zero line for negative values</li>
+            <li>MVC, activation, imbalance, fatigue</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Slide 5</p>
+      <h2>Posture Analysis Module</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Technology used</h3>
+          <ul>
+            <li>Python</li>
+            <li>OpenCV</li>
+            <li>MediaPipe Pose Landmarker</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>How it works</h3>
+          <ul>
+            <li>Camera feed is processed in Python.</li>
+            <li>Body landmarks are detected frame by frame.</li>
+            <li>Joint angles are calculated for squats and curls.</li>
+            <li>Reps are counted automatically from angle thresholds.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight">
+        <strong>Example:</strong> in squats, the system analyzes hip and knee angles. In curls, it analyzes elbow angles to detect the lifting and lowering phases.
+      </div>
+      <p class="note">
+        The dashboard shows the processed posture feed coming from the Python backend so the user can visually confirm their form.
+      </p>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Slide 6</p>
+      <h2>Muscle Analysis Module</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Data source</h3>
+          <ul>
+            <li>ESP32 connected over Bluetooth serial</li>
+            <li>Windows assigns a COM port</li>
+            <li>Python serial bridge reads incoming EMG values</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Incoming ESP32 format</h3>
+          <ul>
+            <li><code>raw1,envelope1,raw2,envelope2</code></li>
+            <li>The current graph plots only <code>raw1</code> and <code>raw2</code></li>
+            <li>Negative and positive values are displayed around a center line</li>
+          </ul>
+        </div>
+      </div>
+      <div class="metric-grid">
+        <div class="card">
+          <h4>Raw 1</h4>
+          <p>Muscle channel 1 live signal</p>
+        </div>
+        <div class="card">
+          <h4>Raw 2</h4>
+          <p>Muscle channel 2 live signal</p>
+        </div>
+        <div class="card">
+          <h4>Imbalance</h4>
+          <p>Difference between both channels</p>
+        </div>
+        <div class="card">
+          <h4>Fatigue</h4>
+          <p>Estimated from live signal strength over time</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Slide 7</p>
+      <h2>Combined Mode and Recommendations</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Combined mode</h3>
+          <ul>
+            <li>Posture and muscle panels appear together</li>
+            <li>User monitors form and muscle behavior in one screen</li>
+            <li>Useful for comparing correct posture with EMG changes</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Recommendations provided</h3>
+          <ul>
+            <li>Improve squat depth or chest position</li>
+            <li>Reduce momentum during curls</li>
+            <li>Take more rest if fatigue rises</li>
+            <li>Correct left-right muscle imbalance</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight">
+        At the end of the session, the system shows a performance summary based on reps completed, posture quality, and EMG behavior.
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Slide 8</p>
+      <h2>Extra Features</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Timers</h3>
+          <ul>
+            <li>Session timer</li>
+            <li>Rest timer between sets</li>
+            <li>Muscle monitoring duration timer</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Doctor lookup</h3>
+          <ul>
+            <li>Uses geolocation</li>
+            <li>Searches nearby orthopedic doctors</li>
+            <li>Searches physiotherapy and sports medicine specialists</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Practical usability</h3>
+          <ul>
+            <li>Large live posture feed</li>
+            <li>Local Python bridge for serial and posture</li>
+            <li>Simple browser dashboard for demonstration</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Slide 9</p>
+      <h2>Conclusion and Future Scope</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Conclusion</h3>
+          <ul>
+            <li>The system combines posture and muscle monitoring in one platform.</li>
+            <li>It helps improve exercise quality, safety, and performance awareness.</li>
+            <li>It provides real-time and end-of-session feedback for users.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Future improvements</h3>
+          <ul>
+            <li>Store workout history and progress</li>
+            <li>Add more exercises beyond squats and curls</li>
+            <li>Use trained models for better injury-risk prediction</li>
+            <li>Generate full reports automatically</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight">
+        <strong>Closing line:</strong> this project demonstrates how AI vision and EMG sensing can be combined to create a smarter and more personalized fitness assistant.
+      </div>
+    </section>
+  </div>
+
+  <div class="footer">
+    Use arrow keys or the Previous / Next buttons to present
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const counter = document.getElementById("counter");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    let current = 0;
+
+    function render() {
+      slides.forEach((slide, index) => slide.classList.toggle("active", index === current));
+      counter.textContent = `${current + 1} / ${slides.length}`;
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === slides.length - 1;
+    }
+
+    prevBtn.addEventListener("click", () => {
+      current = Math.max(0, current - 1);
+      render();
+    });
+
+    nextBtn.addEventListener("click", () => {
+      current = Math.min(slides.length - 1, current + 1);
+      render();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "PageDown") {
+        current = Math.min(slides.length - 1, current + 1);
+        render();
+      }
+      if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        current = Math.max(0, current - 1);
+        render();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>

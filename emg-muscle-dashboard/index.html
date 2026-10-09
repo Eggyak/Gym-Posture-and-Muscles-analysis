@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMG Muscle Analysis Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div>
+        <p class="eyebrow">EMG Muscle Analysis</p>
+        <h1>Muscle Signal Lab</h1>
+        <p class="lede">
+          Separate dashboard focused only on EMG signal monitoring, simulation, fatigue behavior, and imbalance analysis.
+        </p>
+      </div>
+
+      <div class="sidebar-card">
+        <p class="sidebar-label">Simulation Modes</p>
+        <ul class="compact-list">
+          <li>Resting State</li>
+          <li>Mild Contractions</li>
+          <li>Maximal Activation</li>
+          <li>Muscle Fatigue Detection</li>
+          <li>Identification of Muscle Imbalance</li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <p class="sidebar-label">Usage</p>
+        <p class="muted">
+          Use simulation mode when hardware is unavailable. Later, switch to COM-port mode to read real EMG values from your device.
+        </p>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Standalone EMG Dashboard</p>
+          <h2>Live Muscle Analysis</h2>
+        </div>
+        <span id="connection-badge" class="badge warn">Sensor Connected</span>
+      </header>
+
+      <section class="card">
+        <div class="card-head">
+          <p class="eyebrow">Signal Source</p>
+          <h3>Choose simulation mode or COM port</h3>
+        </div>
+
+        <div class="field-grid">
+          <label>
+            <span>Source mode</span>
+            <select id="source-mode">
+              <option value="fake">Simulation</option>
+              <option value="serial">Sensor Input</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Target analysis</span>
+            <select id="scenario">
+              <option value="resting">Resting State</option>
+              <option value="mild">Mild Contractions</option>
+              <option value="maximal">Maximal Activation</option>
+              <option value="fatigue">Muscle Fatigue Detection</option>
+              <option value="imbalance">Identification of Muscle Imbalance</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Sensor port</span>
+            <input id="com-port" type="text" value="COM5" placeholder="COM5">
+          </label>
+
+          <label>
+            <span>Baud rate</span>
+            <input id="baud-rate" type="number" value="115200" placeholder="115200">
+          </label>
+        </div>
+
+        <div class="controls-row">
+          <button id="start-fake-btn" class="primary-btn" type="button">Start the Seccion</button>
+          <button id="connect-serial-btn" class="secondary-btn" type="button">Sensor Connect</button>
+          <button id="disconnect-btn" class="ghost-btn" type="button">Stop Signal</button>
+        </div>
+        <p class="muted" id="status-copy"></p>
+      </section>
+
+      <section class="card">
+        <div class="card-head inline-card-head">
+          <div>
+            <p class="eyebrow">Live Plot</p>
+            <h3>Arduino-style EMG Serial Plotter</h3>
+          </div>
+          <span id="scenario-pill" class="pill">Resting State</span>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="emg-chart" width="1400" height="500"></canvas>
+        </div>
+        <p id="raw-line" class="muted raw-line"></p>
+      </section>
+
+      <section class="metric-grid">
+        <article class="metric card">
+          <span>Raw 1 MVC</span>
+          <strong id="mvc-a">--</strong>
+        </article>
+        <article class="metric card">
+          <span>Raw 2 MVC</span>
+          <strong id="mvc-b">--</strong>
+        </article>
+        <article class="metric card">
+          <span>Activation</span>
+          <strong id="activation">--</strong>
+        </article>
+        <article class="metric card">
+          <span>Imbalance</span>
+          <strong id="imbalance">--</strong>
+        </article>
+        <article class="metric card">
+          <span>Fatigue</span>
+          <strong id="fatigue">--</strong>
+        </article>
+        <article class="metric card">
+          <span>Signal Source</span>
+          <strong id="signal-source">Simulation</strong>
+        </article>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <p class="eyebrow">Interpretation</p>
+          <h3>Performance Recommendation</h3>
+        </div>
+        <div class="recommendation-box">
+          <p id="recommendation">
+            Start a simulation or connect a COM port to begin muscle analysis.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

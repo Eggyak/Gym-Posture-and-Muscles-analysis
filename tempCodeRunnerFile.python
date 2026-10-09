@@ -1,0 +1,29 @@
+import serial
+
+# 🔁 Change COM port (check in Device Manager)
+port = "COM4"   # Example: COM5
+baud = 9600     # HC-05 default OR 115200 if using USB
+
+ser = serial.Serial(port, baud, timeout=1)
+
+print("Connected...")
+
+while True:
+    try:
+        data = ser.readline().decode().strip()
+
+        if data:
+            # Raw output
+            print("Raw:", data)
+
+            # Split values
+            values = data.split(",")
+
+            if len(values) == 2:
+                emg1 = float(values[0])
+                emg2 = float(values[1])
+
+                print(f"EMG1: {emg1:.2f}   EMG2: {emg2:.2f}")
+
+    except Exception as e:
+        print("Error:", e)
